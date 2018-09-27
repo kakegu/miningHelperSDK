@@ -32,9 +32,13 @@ def get_number(type=3):
     address = get_address()
     sql = "SELECT SUM(amount) AS coinbasebalance FROM outputs JOIN units USING(unit) WHERE is_spent=0 AND address='{0}' AND sequence='good' AND asset IS NULL AND pow_type={1}".format(address,type)
     values = get_values(sql)
+
     if (len(values)>0):
         amount = values[0][0]
-        return amount #float(amount/1000000)
+        if (amount == None or amount == "None"):
+            return 0
+        else:
+            return amount #float(amount/1000000)
     else :
         return 0
 
@@ -53,9 +57,11 @@ def is_round_in(round_index):
     address = get_address()
     sql = "select address from units join unit_authors using(unit) where round_index={0} and pow_type=1 and sequence='good';".format(round_index)
     values = get_values(sql)
-    for item in values:
-        if (address == item[0]):
-            return True
+    print ("!!! {0}".format(values))
+    if (len(values)>0):
+        for item in values:
+            if (address == item[0]):
+                return True
     return False
 
 def get_round_index():
