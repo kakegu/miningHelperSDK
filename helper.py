@@ -1,5 +1,24 @@
 from os import popen
 import sqlite3
+import requests
+
+def get_key():
+    # goto https://console.bce.baidu.com/ai/?_=1538041314903#/ai/speech/app/list  reg a baidu access
+    API_Key = "here input your baidu app_key"
+    Secret_Key = "here input your baidu secret_key"
+    url = "https://openapi.baidu.com/oauth/2.0/token?grant_type=client_credentials&client_id={0}&client_secret={1}".format(API_Key,Secret_Key)
+    r = requests.get(url)
+    json = r.json()
+    key = json["access_token"]
+    return key
+
+def play(txt):
+    key = get_key()
+    url = "http://tsn.baidu.com/text2audio?lan=zh&ctp=1&cuid=abcdxxx&tok={0}&tex={1}&vol=9&per=0&spd=5&pit=5&aue=3".format(key,txt)
+    sh = "mpg123 '{0}'".format(url)
+    #print (sh)
+    return popen(sh).read()
+
 def get_username():
     handle = popen("whoami")
     username = handle.read()
